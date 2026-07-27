@@ -580,3 +580,108 @@ body {
   overflow-wrap: break-word;
   white-space: pre-wrap;
 }
+
+/* Mission Board */
+.mission-board {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.mission-board-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.mission-board-header h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.mission-progress {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.mission-meter {
+  height: 6px;
+  background: var(--color-bg);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  border: 1px solid var(--color-border);
+}
+
+.mission-meter-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.quest-banner {
+  padding: 10px 14px;
+  background: var(--color-certified-bg);
+  border: 1px solid var(--color-certified);
+  border-radius: 6px;
+  color: var(--color-certified);
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.mission-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mission-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+}
+
+.mission-complete {
+  background: var(--color-certified-bg);
+}
+
+.mission-pending {
+  background: var(--color-bg);
+}
+
+.mission-check {
+  flex-shrink: 0;
+  width: 18px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.mission-complete .mission-check {
+  color: var(--color-certified);
+}
+
+.mission-pending .mission-check {
+  color: var(--color-text-muted);
+}
+
+.mission-label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.mission-hint {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  overflow-wrap: break-word;
+}

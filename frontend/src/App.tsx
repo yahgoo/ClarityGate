@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { AnalysisResponse, Finding } from './types';
 import { analyzeSpec, applyRewrite, removeRewrite, resetRewrites } from './api';
+import { deriveMissions, missionProgress } from './gamification';
 
 const SAMPLE_SPEC = `# Login Requirements
 
@@ -194,6 +195,39 @@ export default function App() {
                   <span className="stat-label">Info</span>
                 </div>
               </div>
+
+              {/* Mission Board */}
+              {(() => {
+                const missions = deriveMissions(result);
+                const progress = missionProgress(missions);
+                const questReady = missions.find((m) => m.id === 'quest-ready')?.complete ?? false;
+                return (
+                  <div className="mission-board">
+                    <div className="mission-board-header">
+                      <h3>Mission Board</h3>
+                      <span className="mission-progress">{progress.done}/{progress.total}</span>
+                    </div>
+                    <div className="mission-meter">
+                      <div
+                        className="mission-meter-fill"
+                        style={{ width: `${(progress.done / progress.total) * 100}%` }}
+                      />
+                    </div>
+                    {questReady && (
+                      <div className="quest-banner">Quest-ready — spec meets certification threshold</div>
+                    )}
+                    <ul className="mission-list">
+                      {missions.map((m) => (
+                        <li key={m.id} className={`mission-item ${m.complete ? 'mission-complete' : 'mission-pending'}`}>
+                          <span className="mission-check">{m.complete ? '\u2713' : '\u25CB'}</span>
+                          <span className="mission-label">{m.label}</span>
+                          <span className="mission-hint">{m.hint}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })()}
 
               {/* Findings */}
               <div className="findings-section">
