@@ -1,5 +1,7 @@
 # ClarityGate — Demo Video Script
 
+> For the full-stack (Option 2) recording flow, see [docs/fullstack-demo-runbook.md](fullstack-demo-runbook.md).
+
 Target length: **2 minutes 30 seconds**
 
 ---
