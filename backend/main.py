@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.config import DEFAULT_DB_PATH
 from backend.database import init_db
+from backend.routes import router
 
 
 @asynccontextmanager
@@ -43,5 +44,7 @@ def create_app(db_path: str = DEFAULT_DB_PATH) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    app.include_router(router)
 
     return app
