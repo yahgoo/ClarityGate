@@ -1,0 +1,2 @@
+"""ClarityGate core linter package."""
+

@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+
+# Editor / OS artifacts
+*.swp
+*~
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+dist/
+build/
+
+# Local env
+.env
+.env.*
+.venv-daytona/
+
+# ClarityGate runtime
+*.db
+*.sqlite
+*.sqlite3
+claritygate-report.md
+
+# Generated evaluation artifacts
+output/
+tmp/
+
+# Local indexes and tooling state
+.codegraph/
