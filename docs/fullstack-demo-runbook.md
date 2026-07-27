@@ -125,3 +125,7 @@ git status --short                                # no tracked changes
 ```
 
 Then do a quick browser smoke test of the full flow above before hitting record.
+
+---
+
+For the automated HyperFrames video production workflow (Playwright screenshots + composition + render), see [docs/video-production-notes.md](video-production-notes.md).

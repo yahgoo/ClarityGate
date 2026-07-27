@@ -1,0 +1,3 @@
+display_name: ClarityGate Demo Video
+short_description: Build and verify ClarityGate demo videos with HyperFrames.
+default_prompt: Create a ClarityGate demo video from the running local app and verify the final contact sheet shows the real UI.
