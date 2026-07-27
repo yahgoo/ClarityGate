@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { AnalysisResponse, Finding } from './types';
-import { analyzeSpec } from './api';
+import { analyzeSpec, applyRewrite, removeRewrite, resetRewrites } from './api';
 
 const SAMPLE_SPEC = `# Login Requirements
 
@@ -25,6 +25,8 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [severityFilter, setSeverityFilter] = useState<Severity | 'all'>('all');
+  const [rewriteLoading, setRewriteLoading] = useState<number | null>(null);
+  const [rewriteError, setRewriteError] = useState<string | null>(null);
 
   const handleAnalyze = async () => {
     if (!rawText.trim()) {
@@ -48,11 +50,55 @@ export default function App() {
     }
   };
 
+  const handleApplyRewrite = async (lineNumber: number, rewrittenText: string) => {
+    if (!result) return;
+    setRewriteLoading(lineNumber);
+    setRewriteError(null);
+    try {
+      const data = await applyRewrite(result.spec_id, lineNumber, rewrittenText);
+      setResult(data);
+    } catch (err) {
+      setRewriteError(err instanceof Error ? err.message : 'Failed to apply rewrite.');
+    } finally {
+      setRewriteLoading(null);
+    }
+  };
+
+  const handleRemoveRewrite = async (lineNumber: number) => {
+    if (!result) return;
+    setRewriteLoading(lineNumber);
+    setRewriteError(null);
+    try {
+      const data = await removeRewrite(result.spec_id, lineNumber);
+      setResult(data);
+    } catch (err) {
+      setRewriteError(err instanceof Error ? err.message : 'Failed to remove rewrite.');
+    } finally {
+      setRewriteLoading(null);
+    }
+  };
+
+  const handleResetRewrites = async () => {
+    if (!result) return;
+    setRewriteLoading(-1);
+    setRewriteError(null);
+    try {
+      const data = await resetRewrites(result.spec_id);
+      setResult(data);
+    } catch (err) {
+      setRewriteError(err instanceof Error ? err.message : 'Failed to reset rewrites.');
+    } finally {
+      setRewriteLoading(null);
+    }
+  };
+
   const filteredFindings: Finding[] = result
     ? severityFilter === 'all'
       ? result.findings
       : result.findings.filter((f) => f.severity === severityFilter)
     : [];
+
+  const isRewriteBusy = rewriteLoading !== null;
 
   return (
     <div className="app">
@@ -180,13 +226,59 @@ export default function App() {
                         </div>
                         <p className="finding-message">{f.message}</p>
                         {f.suggested_rewrite && (
-                          <code className="finding-suggestion">{f.suggested_rewrite}</code>
+                          <div className="finding-rewrite-action">
+                            <code className="finding-suggestion">{f.suggested_rewrite}</code>
+                            <button
+                              className="btn btn-sm btn-apply"
+                              disabled={isRewriteBusy}
+                              onClick={() => handleApplyRewrite(f.line_number, f.suggested_rewrite)}
+                            >
+                              {rewriteLoading === f.line_number ? 'Applying…' : 'Apply fix'}
+                            </button>
+                          </div>
                         )}
                       </li>
                     ))}
                   </ul>
                 )}
               </div>
+
+              {/* Accepted rewrites */}
+              {result.rewrites.length > 0 && (
+                <div className="rewrites-section">
+                  <div className="rewrites-header">
+                    <h3>Accepted Rewrites ({result.rewrites.length})</h3>
+                    <button
+                      className="btn btn-sm btn-danger"
+                      disabled={isRewriteBusy}
+                      onClick={handleResetRewrites}
+                    >
+                      {rewriteLoading === -1 ? 'Resetting…' : 'Reset all'}
+                    </button>
+                  </div>
+                  <ul className="rewrites-list">
+                    {result.rewrites.map((rw) => (
+                      <li key={rw.line_number} className="rewrite-item">
+                        <span className="rewrite-line">L{rw.line_number}</span>
+                        <code className="rewrite-text">{rw.rewritten_text}</code>
+                        <button
+                          className="btn btn-sm btn-remove"
+                          disabled={isRewriteBusy}
+                          onClick={() => handleRemoveRewrite(rw.line_number)}
+                        >
+                          {rewriteLoading === rw.line_number ? 'Removing…' : 'Remove'}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {rewriteError && (
+                <div className="alert alert-error">
+                  <strong>Rewrite error:</strong> {rewriteError}
+                </div>
+              )}
 
               {/* Requirements list */}
               <details className="details-block">
